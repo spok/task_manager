@@ -1,0 +1,5 @@
+.idea/
+task_manager/.idea/
+venv
+*.sqlite3
+migrations

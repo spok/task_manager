@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Задача №{{task.current_id}} - {{ task.name }}</title>
+</head>
+<body>
+<h1>Задача №{{task.current_id}} - {{ task.name }}</h1>
+<table>
+    <tr>
+        <td>Краткое описание:</td>  <td>{{ task.description }}</td>
+    </tr>
+    <tr>
+        <td>Поставил задачу:</td>  <td>{{ task.who_set }}</td>
+    </tr>
+    <tr>
+        <td>Приоритет:</td>  <td>{{ task.priority }}</td>
+    </tr>
+    <tr>
+        <td>Текущий статус:</td>  <td>{{ task.status }}</td>
+    </tr>
+    <tr>
+        <td>Срок выполнения:</td>  <td>{{ task.date_completion }}</td>
+    </tr>
+    <tr>
+        <td>Проект:</td>  <td>{{ task.project_name }}</td>
+    </tr>
+</table>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit">Добавить комментарий</button>
+</form>
+
+{% if comments %}
+    {% for comment in comments %}
+        <p>{{ comment.user_added }} {{ comment.date_publication }}</p>
+        <p>{{ comment.comment_text }}</p>
+    {% endfor %}
+{% else %}
+    <p>Комментарии отсутствуют</p>
+{% endif %}
+
+</body>
+</html>

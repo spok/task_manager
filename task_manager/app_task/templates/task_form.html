@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Задача</title>
+</head>
+<body>
+    <h1>Задача</h1>
+    <form method="POST" action="task_add">
+        {% csrf_token %}
+        {{ task_form.as_p }}
+        <button type="submit">Добавить</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список задач</title>
+</head>
+<body>
+{% if object_list %}
+<table>
+
+    {% for task in object_list %}
+        <li>
+            <a href="/task/{{ task.id }}"> {{ task.name }} </a>
+        </li>
+    {% endfor %}
+</table>
+{% else %}
+    <p>Задач нет</p>
+{% endif %}
+</body>
+</html>
