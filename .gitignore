@@ -3,3 +3,4 @@ task_manager/.idea/
 venv
 *.sqlite3
 migrations
+secret_settings.py
