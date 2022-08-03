@@ -34,10 +34,28 @@
 </form>
 
 {% if comments %}
-    {% for comment in comments %}
-        <p>{{ comment.user_added }} {{ comment.date_publication }}</p>
-        <p>{{ comment.comment_text }}</p>
-    {% endfor %}
+    <table>
+        {% for comment in comments %}
+            <tr>
+                <td><div>{{ comment.user }}</div> <div>{{ comment.date }}</div></td>
+                <td>{{ comment.text }}</td>
+                <td><a href="/comment/{{ comment.id }}/delete">Удалить</a></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                {% if comment.files %}
+                    <div> Файлы:
+                    {% for file in comment.files %}
+                    <a href="{{ file.file.url }}">{{ file.real_name }}</a>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+                </td>
+            </tr>
+
+        {% endfor %}
+    </table>
+
 {% else %}
     <p>Комментарии отсутствуют</p>
 {% endif %}

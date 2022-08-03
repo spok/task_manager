@@ -10,10 +10,19 @@ class TaskView(View):
         try:
             current_task = Task.objects.get(id=pk)
             comments = Comment.objects.filter(task=current_task)
+            comments_list = []
+            for comm in comments:
+                comm_dict = dict()
+                comm_dict['text'] = comm.comment_text
+                comm_dict['id'] = comm.id
+                comm_dict['user'] = comm.user_added
+                comm_dict['date'] = comm.date_publication
+                comm_dict['files'] = Document.objects.filter(comment=comm)
+                comments_list.append(comm_dict)
             comment_form = CommentForm()
             return render(request,
                           'task.html',
-                          context={'task': current_task, 'comments': comments, 'comment_form': comment_form}
+                          context={'task': current_task, 'comments': comments_list, 'comment_form': comment_form}
                           )
         except Task.DoesNotExist:
             return HttpResponseNotFound('<h2>Задача не найдена</h2>')
@@ -35,6 +44,8 @@ class TaskView(View):
                 new_comment.save()
                 current_task.comments.add(new_comment)
                 current_task.save()
+                return HttpResponseRedirect(f'/task/{pk}')
+
         except Task.DoesNotExist:
             return HttpResponseNotFound('<h2>Задача не найдена</h2>')
 
@@ -67,7 +78,7 @@ class TaskAddView(View):
             new_task.current_id = current_project.last_id
             new_task.save()
             task_form.save_m2m()
-            return HttpResponseRedirect('tasks')
+            return HttpResponseRedirect('/tasks')
         else:
             task_form.add_error('__all__', 'Ошибка ввода данных')
         return render(request,
@@ -97,3 +108,12 @@ class TaskEditView(View):
         if task_form.is_valid():
             current_task.save()
         return HttpResponseRedirect('/tasks')
+
+
+class CommentDelete(View):
+
+    def get(self, request, id):
+        comment = Comment.objects.get(id=id)
+        current_task = Task.objects.get(comments=comment).id
+        comment.delete()
+        return HttpResponseRedirect(f'/task/{current_task}')
