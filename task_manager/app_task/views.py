@@ -1,9 +1,24 @@
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.views import generic, View
-from .models import Task, Project, Comment, Document
+from django.contrib.auth.models import User
+from .models import Task, Project, Comment, Document, Logger
 from .forms import TaskModelForm, CommentForm
 
+
+def add_log(user, task, text):
+    """
+    Сохранение лога в базу данных
+    :param user: id пользователя
+    :param task: id задачи
+    :param text: описание действия
+    :return: None
+    """
+    new_log = Logger()
+    new_log.user = user
+    new_log.task = task
+    new_log.text = text
+    new_log.save()
 
 class TaskView(View):
     def get(self, request, pk):
@@ -44,6 +59,7 @@ class TaskView(View):
                 new_comment.save()
                 current_task.comments.add(new_comment)
                 current_task.save()
+                add_log(request.user, current_task, 'добавил(а) комментарий')
                 return HttpResponseRedirect(f'/task/{pk}')
 
         except Task.DoesNotExist:
@@ -54,7 +70,9 @@ class TaskListView(View):
     def get(self, request):
         current_user = request.user
         task_list = Task.objects.filter(executor=current_user)
-        return render(request, 'task_list.html', context={'object_list': task_list})
+        log_list = Logger.objects.all()[:5]
+        return render(request, 'task_list.html', context={'object_list': task_list,
+                                                          'user': current_user, 'log_list': log_list})
 
 
 class TaskAddView(View):
@@ -78,6 +96,7 @@ class TaskAddView(View):
             new_task.current_id = current_project.last_id
             new_task.save()
             task_form.save_m2m()
+            add_log(request.user, new_task, 'добавил(а) задачу')
             return HttpResponseRedirect('/tasks')
         else:
             task_form.add_error('__all__', 'Ошибка ввода данных')
@@ -107,6 +126,18 @@ class TaskEditView(View):
         task_form = TaskModelForm(request.POST, instance=current_task)
         if task_form.is_valid():
             current_task.save()
+            add_log(request.user, current_task, 'редактировал(а) задачу')
+        return HttpResponseRedirect('/tasks')
+
+
+class TaskArchivView(View):
+    def get(self, request, id):
+        # Переводим задачу в архив
+        current_user = request.user
+        current_task = Task.objects.get(id=id)
+        current_task.in_archive = True
+        current_task.save()
+        add_log(request.user, current_task, 'отправил(а) задачу в архив')
         return HttpResponseRedirect('/tasks')
 
 
@@ -114,6 +145,8 @@ class CommentDelete(View):
 
     def get(self, request, id):
         comment = Comment.objects.get(id=id)
-        current_task = Task.objects.get(comments=comment).id
+        current_task = Task.objects.get(comments=comment)
+        current_id = current_task.id
         comment.delete()
-        return HttpResponseRedirect(f'/task/{current_task}')
+        add_log(request.user, current_task, 'удалил(а) комментарий к задаче')
+        return HttpResponseRedirect(f'/task/{current_id}')

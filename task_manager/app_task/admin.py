@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Status, Priority, Project, Task, Comment, Document
+from .models import Status, Priority, Project, Task, Comment, Document, Logger
 
 
 @admin.register(Status)
@@ -31,3 +31,7 @@ class DocumentAdmin(admin.ModelAdmin):
 class TaskAdmin(admin.ModelAdmin):
     list_display = ['name', 'date_completion', 'who_set', 'status', 'priority', 'project_name']
     exclude = ("current_id", )
+
+@admin.register(Logger)
+class LoggerAdmin(admin.ModelAdmin):
+    list_display = ['text', 'date', 'user', 'task']

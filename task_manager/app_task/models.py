@@ -67,7 +67,7 @@ class Comment(models.Model):
     comment_text = models.CharField(max_length=300, verbose_name='Комментарий')
     user_added = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name='Пользователь')
     date_publication = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время комментария')
-    files_added = models.ManyToManyField(Document, null=True, blank=True, verbose_name='Файлы')
+    files_added = models.ManyToManyField(Document, blank=True, verbose_name='Файлы')
 
     def __str__(self):
         return self.comment_text
@@ -95,7 +95,7 @@ class Task(models.Model):
                                null=True, verbose_name='Текущий статус')
     priority = models.ForeignKey(Priority, on_delete=models.SET_NULL, null=True, verbose_name='Приоритет')
     project_name = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, verbose_name='Проект')
-    comments = models.ManyToManyField(Comment, verbose_name='Комментарии')
+    comments = models.ManyToManyField(Comment, blank=True, verbose_name='Комментарии')
 
     def __str__(self):
         return f'Задача № {self.current_id} - {self.name}'
@@ -105,3 +105,16 @@ class Task(models.Model):
         verbose_name = 'Задача'
         verbose_name_plural = 'Задачи'
 
+class Logger(models.Model):
+    text = models.CharField(max_length=200, verbose_name='Выполненное действие')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, verbose_name='Задача')
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время действия')
+
+    def __str__(self):
+        return self.text
+
+    class Meta:
+        ordering = ['-date']
+        verbose_name = 'Лог'
+        verbose_name_plural = 'Лог'

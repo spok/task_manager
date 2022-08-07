@@ -1,64 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Задача №{{task.current_id}} - {{ task.name }}</title>
-</head>
-<body>
-<h1>Задача №{{task.current_id}} - {{ task.name }}</h1>
-<table>
-    <tr>
-        <td>Краткое описание:</td>  <td>{{ task.description }}</td>
-    </tr>
-    <tr>
-        <td>Поставил задачу:</td>  <td>{{ task.who_set }}</td>
-    </tr>
-    <tr>
-        <td>Приоритет:</td>  <td>{{ task.priority }}</td>
-    </tr>
-    <tr>
-        <td>Текущий статус:</td>  <td>{{ task.status }}</td>
-    </tr>
-    <tr>
-        <td>Срок выполнения:</td>  <td>{{ task.date_completion }}</td>
-    </tr>
-    <tr>
-        <td>Проект:</td>  <td>{{ task.project_name }}</td>
-    </tr>
-</table>
+{% extends "base.html" %}
+{% block title %} Задача №{{task.current_id}} - {{ task.name }} {% endblock title %}
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ comment_form.as_p }}
-    <button type="submit">Добавить комментарий</button>
-</form>
+{% block sidebar %} {% endblock sidebar %}
 
-{% if comments %}
-    <table>
-        {% for comment in comments %}
+{% block content %}
+{% load static %}
+    <section class="section-task">
+      <div class="container">
+        <h1>Задача №{{task.current_id}} - {{ task.name }}</h1>
+        <table class="table-task">
             <tr>
-                <td><div>{{ comment.user }}</div> <div>{{ comment.date }}</div></td>
-                <td>{{ comment.text }}</td>
-                <td><a href="/comment/{{ comment.id }}/delete">Удалить</a></td>
+                <td>Краткое описание:</td>  <td>{{ task.description }}</td>
             </tr>
             <tr>
-                <td colspan="2">
-                {% if comment.files %}
-                    <div> Файлы:
-                    {% for file in comment.files %}
-                    <a href="{{ file.file.url }}">{{ file.real_name }}</a>
-                    {% endfor %}
-                    </div>
-                {% endif %}
-                </td>
+                <td>Поставил задачу:</td>  <td>{{ task.who_set }}</td>
             </tr>
+            <tr>
+                <td>Приоритет:</td>  <td>{{ task.priority }}</td>
+            </tr>
+            <tr>
+                <td>Текущий статус:</td>  <td>{{ task.status }}</td>
+            </tr>
+            <tr>
+                <td>Срок выполнения:</td>  <td>{{ task.date_completion }}</td>
+            </tr>
+            <tr>
+                <td>Проект:</td>  <td>{{ task.project_name }}</td>
+            </tr>
+        </table>
 
-        {% endfor %}
-    </table>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h1>Новый комментарий</h1>
+            <div class="comment-text">
+                <label for="id_comment_text" class="label-comment">Текст комментария:</label>
+                <textarea name="comment_text" cols="40" rows="5" maxlength="300" required="" id="id_comment_text"></textarea>
+            </div>
+            <div>
+                <label for="id_files_added">Добавить файлы:</label>
+                <input type="file" name="files_added" multiple="" id="id_files_added">
+            </div>
+            <div class="button-add">
+                <button type="submit" class="button-add-comment">Добавить</button>
+            </div>
+        </form>
 
-{% else %}
-    <p>Комментарии отсутствуют</p>
-{% endif %}
-
-</body>
-</html>
+        {% if comments %}
+          <div class="comments">
+          <h1>Комментарии</h1>
+            <table class="table-comment">
+                {% for comment in comments %}
+                    <tr>
+                        <td>
+                            <div>{{ comment.user }}</div> <div>{{ comment.date }}</div>
+                        </td>
+                        <td>
+                            {{ comment.text }}
+                        </td>
+                        <td>
+                            <a href="/comment/{{ comment.id }}/delete" class="button-edit"><img src="{% static 'img/button-delete.png' %}" alt="" class="image-edit"></a>
+                        </td>
+                    </tr>
+                    {% if comment.files %}
+                        <tr>
+                            <td colspan="2">
+                                <div> Файлы:
+                                    {% for file in comment.files %}
+                                      <a href="{{ file.file.url }}" class="link-file">{{ file.real_name }}</a>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>Комментарии отсутствуют</p>
+        {% endif %}
+        </div>
+      </div>
+    </section>
+{% endblock content %}

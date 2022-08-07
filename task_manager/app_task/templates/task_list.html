@@ -1,21 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Список задач</title>
-</head>
-<body>
-{% if object_list %}
-<table>
+{% extends "base.html" %}
+{% block title %} Список задач {% endblock title %}
 
-    {% for task in object_list %}
-        <li>
-            <a href="/task/{{ task.id }}"> {{ task.name }} </a>
-        </li>
-    {% endfor %}
-</table>
-{% else %}
-    <p>Задач нет</p>
-{% endif %}
-</body>
-</html>
+{% block content %}
+{% load static %}
+    <section class="section-task">
+      <div class="container">
+        <h1>
+          Список активных задач
+        </h1>
+        <table class="table-task-list">
+          <tr class="table-head-row">
+            <th class="table-head-number">
+              Номер
+            </th>
+            <th class="table-head-description">
+              Описание
+            </th>
+            <th class="table-head-status">
+              Статус
+            </th>
+            <th class="table-head-priority">
+              Приоритет
+            </th>
+            <th class="table-head-date">
+              Дата завершения
+            </th>
+            <th></th>
+            <th></th>
+          </tr>
+
+          {% if object_list %}
+            {% for task in object_list %}
+              {% if not task.in_archive %}
+              <tr>
+                <td class="table-elem-number">
+                  {{ task.current_id }}
+                </td>
+                <td class="table-elem-description">
+                  <a href="/task/{{ task.id }}">{{ task.name }}</a>
+                </td>
+                <td class="table-elem-status">
+                  {{ task.status }}
+                </td>
+                <td class="table-elem-priority">
+                  {{ task.priority }}
+                </td>
+                <td class="table-elem-date">
+                  {{ task.date_completion }}
+                </td>
+                <td class="button-elem-edit">
+                  <a href="task/{{ task.id }}/edit" class="button-edit"><img src="{% static 'img/button-edit.png' %}" alt="" class="image-edit"></a>
+                </td>
+                <td class="button-elem-archive">
+                  <a href="task/{{ task.id }}/archive" class="button-delete"><img src="{% static 'img/button-delete.png' %}" alt="" class="image-delete"></a>
+                </td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <tr>
+                <td colspan="5">
+                    Активных задач нет
+                </td>
+            </tr>
+          {% endif %}
+        </table>
+      </div>
+    </section>
+{% endblock content %}

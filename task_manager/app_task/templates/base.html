@@ -1,10 +1,123 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> {% block title %} Менеджер задач {% endblock title %} </title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
 
+{% block header %}
+  <header class="header">
+    <div class="container header-container">
+      <a href="/" class="logo">
+        <img src="{% static 'img/logo.png' %}" alt="Главная страница" class="logo-img">
+      </a>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="{% url 'task_list' %}" class="hav-link">Список</a>
+          </li>
+          <li class="nav-item">
+            <a href="" class="hav-link">Архив</a>
+          </li>
+          <li class="nav-item">
+            <a href="" class="hav-link">История</a>
+          </li>          
+          <li class="nav-item">
+            <a href="{% url 'task_add' %}" class="hav-link"> <img src="{% static 'img/add.png' %}" alt="" class="img-add"></a>
+          </li>
+        </ul>
+      </nav>
+      <div class="user-info-logout">
+        <div class="user-name">
+          {{ user }}
+        </div>
+        <a href="{% url 'logout' %}" class="button-logout">Выйти</a>
+      </div>
+    </div>  
+  </header>
+{% endblock header %}
+
+{% block sidebar %}
+  <main>
+    <section class="side-panel">
+      <nav class="side-panel-sort">
+        <h2>Сортировка</h2>
+        <div class="sort-by-priority">
+          <h3>по приоритету:</h3>
+          <ul class="sort-list">
+            <li class="sort-elem">
+              <a href="" class="sort-link">очень высокий</a>
+            </li>
+            <li class="sort-elem">
+              <a href="" class="sort-link">высокий</a>
+            </li>
+            <li class="sort-elem">
+              <a href="" class="sort-link">нормальный</a>
+            </li>
+            <li class="sort-elem">
+              <a href="" class="sort-link">низкий</a>
+            </li>
+          </ul>
+        </div>
+        <div class="sort-by-date">
+          <h3>по дате:</h3>
+          <ul class="sort-list">
+            <li class="sort-elem">
+              <a href="" class="sort-link">сначала новые</a>
+            </li>
+            <li class="sort-elem">
+              <a href="" class="sort-link">сначала старые</a>
+            </li>
+          </ul>
+        </div>         
+        <div class="sort-by-status">
+          <h2>Фильтр</h2>
+          <h3>по статусу:</h3>
+          <ul class="sort-list">
+            <li class="sort-elem">
+              <a href="" class="sort-link">завершен</a>
+            </li>
+            <li class="sort-elem">
+              <a href="" class="sort-link">на утверждении</a>
+            </li>
+            <li class="sort-elem">
+              <a href="" class="sort-link">в работе</a>
+            </li>
+            <li class="sort-elem">
+              <a href="" class="sort-link">поставлена</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <hr>
+      <div class="side-panel-history">
+        <h2>Последние действия</h2>
+        {% if log_list %}
+          <ul class="history-list">
+            {% for log in log_list %}
+              <li class="history-elem">
+                  <a href="task/{{log.task.id}}" class="history-link">Задача №{{ log.task.id }}</a>
+                  <span> {{log.user}} {{ log.text }}. {{ log.date }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </section>
+  </main>
+{% endblock sidebar %}
+
+{% block content %}
+  <div>Контент</div>
+{% endblock content %}
+
 </body>
+
 </html>
