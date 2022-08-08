@@ -69,7 +69,12 @@ class TaskListView(View):
 
     def get(self, request):
         current_user = request.user
-        task_list = Task.objects.filter(executor=current_user)
+        get_archive = request.GET.get("archive", "")
+        if get_archive:
+            task_list = Task.objects.filter(executor=current_user, in_archive=True)
+        else:
+            task_list = Task.objects.filter(executor=current_user, in_archive=False)
+        print(task_list)
         log_list = Logger.objects.all()[:5]
         return render(request, 'task_list.html', context={'object_list': task_list,
                                                           'user': current_user, 'log_list': log_list})
@@ -81,7 +86,7 @@ class TaskAddView(View):
         task_form = TaskModelForm()
         return render(request,
                       'task_form.html',
-                      context={'task_form': task_form}
+                      context={'task_form': task_form, 'title': 'Новая задача'}
                       )
 
     def post(self, request):
@@ -139,6 +144,14 @@ class TaskArchivView(View):
         current_task.save()
         add_log(request.user, current_task, 'отправил(а) задачу в архив')
         return HttpResponseRedirect('/tasks')
+
+
+class LogView(View):
+    def get(self, request):
+        # Вывод истории действий
+        log_list = Logger.objects.all()
+        current_user = request.user
+        return render(request, 'log.html', context={'user': current_user, 'log_list': log_list})
 
 
 class CommentDelete(View):

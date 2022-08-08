@@ -24,10 +24,10 @@
             <a href="{% url 'task_list' %}" class="hav-link">Список</a>
           </li>
           <li class="nav-item">
-            <a href="" class="hav-link">Архив</a>
+            <a href="{% url 'task_list' %}?archive=1" class="hav-link">Архив</a>
           </li>
           <li class="nav-item">
-            <a href="" class="hav-link">История</a>
+            <a href="{% url 'log_list' %}" class="hav-link">История</a>
           </li>          
           <li class="nav-item">
             <a href="{% url 'task_add' %}" class="hav-link"> <img src="{% static 'img/add.png' %}" alt="" class="img-add"></a>

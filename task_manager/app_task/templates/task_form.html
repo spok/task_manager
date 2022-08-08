@@ -1,15 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Задача</title>
-</head>
-<body>
-    <h1>Задача</h1>
-    <form method="POST" action="task_add">
-        {% csrf_token %}
-        {{ task_form.as_p }}
-        <button type="submit">Добавить</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %} {{title}} {% endblock title %}
+
+{% block sidebar %} {% endblock sidebar %}
+
+{% block content %}
+{% load static %}
+    <section class="section-task">
+      <div class="container">
+        <h1>{{title}}</h1>
+        <form method="POST" action="task_add">
+            {% csrf_token %}
+            {{ task_form.as_p }}
+            <button type="submit">Добавить</button>
+        </form>
+      </div>
+    </section>
+{% endblock content %}

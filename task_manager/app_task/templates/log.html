@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %} История {% endblock title %}
+
+{% block sidebar %} {% endblock sidebar %}
+
+{% block content %}
+{% load static %}
+    <section class="section-task">
+        <div class="container">
+            {% if log_list %}
+                <h1>История</h1>
+                <table class="table-log">
+                {% for log in log_list %}
+                        <tr>
+                            <td> <a href="task/{{log.task.id}}" class="history-link">Задача №{{ log.task.id }}. {{ log.task.name }}</a> </td>
+                            <td>{{ log.user }} {{ log.text }}</td>
+                            <td>{{ log.date }}</td>
+                        </tr>
+                {% endfor %}
+                </table>
+            {% else %}
+                <h1>История отсутствует</h1>
+            {% endif %}
+        </div>
+    </section>
+{% endblock content %}
